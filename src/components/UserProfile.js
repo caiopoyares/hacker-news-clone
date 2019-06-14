@@ -20,7 +20,9 @@ export default class UserProfile extends Component {
     }).then(data => {
       return data.slice(0, 50);
     }).then(data => {
-      getOnlyStories(data).then(data => this.setState({ stories: data }));
+      getOnlyStories(data).then(data => {
+        this.setState({ stories: data })
+      }).catch(() => this.setState({ error: true }))
     })
   }
   render() {
@@ -32,16 +34,21 @@ export default class UserProfile extends Component {
           <p>entrou em <strong>{formatDate(userData.created)}</strong> e tem <strong>{userData.karma}</strong> karmas</p>
           <div className="user-posts">
             <h2>Posts</h2>
-            {stories ? (
-              <ul>
-                {stories.map(story => (
-                  <li key={story.id}>
-                    <a className="title" href={story.url}><h4 style={{ fontSize: '1.1rem', color: '#2E8B57', marginBottom: '0.1rem' }}>{story.title}</h4></a>
-                    <p>por <span>{story.by}</span> em {formatDate(story.time)}, com <Link to={`/comments?id=${story.id}`}>{story.kids ? story.kids.length : 0}</Link> comentários</p>
-                  </li>
-                ))}
-              </ul>
-            ) : <Loader type="ThreeDots" color="#2E8B57" />}
+            {this.state.error ? (
+              <p>Desculpe, não foi encontrado nenhum post recente publicado pelo usuário.</p>
+            ) : (
+                stories ? (
+                  <ul>
+                    {stories.map(story => (
+                      <li key={story.id}>
+                        <a className="title" href={story.url}><h4 style={{ fontSize: '1.1rem', color: '#2E8B57', marginBottom: '0.1rem' }}>{story.title}</h4></a>
+                        <p>por <span>{story.by}</span> em {formatDate(story.time)}, com <Link to={`/comments?id=${story.id}`}>{story.kids ? story.kids.length : 0}</Link> comentários</p>
+                      </li>
+                    ))}
+                  </ul>
+                ) : <Loader type="ThreeDots" color="#2E8B57" />
+              )}
+
           </div>
         </div>
       ) : <Loader type="ThreeDots" color="#2E8B57" />

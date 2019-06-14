@@ -34,7 +34,9 @@ export const getOnlyStories = async (array) => {
   const stories = await Promise.all(array.map(id => {
     return fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json?print=pretty`).then(data => data.json())
   }));
-  return stories.filter(item => item.type === 'story');
+  return stories.filter(item => {
+    return item.type === 'story'
+  });
 }
 
 export const getComments = (commentsArr) => {
